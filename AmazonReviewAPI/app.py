@@ -65,11 +65,15 @@ def api():
     url = request.args.get('url',None)
     if url:
         data = scrape(url)
-        # next_page = data['next_page']
-        # while (next_page != None):
-        #     next_data = scrape(next_page)
-        #     for r in next_data['reviews']:
-        #         data['reviews'].append(r)
-        #     next_page = next_data['next_page']
+        next_page = data['next_page']
+        while (next_page != None):
+            next_data = scrape(next_page)
+            if next_data != None:
+                for r in next_data['reviews']:
+                    data['reviews'].append(r)
+                next_page = next_data['next_page']
+            else:
+                next_page = None
+                break
         return jsonify(data)
-    return jsonify({'error':'URL to scrape is not provided'}),400
+    return jsonify({'error':'URL to scrape is not provided'}),400,
