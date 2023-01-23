@@ -53,7 +53,7 @@ def scrape(url):
     data['histogram'] = histogram
     data['average_rating'] = float(data['average_rating'].split(' out')[0])
     data['reviews'] = reviews
-    data['number_of_reviews'] = int(data['number_of_reviews'].split(' global')[0])
+    data['number_of_reviews'] = int(str(data['number_of_reviews'].split(' global')[0]).replace(',',''))
     return data 
     
 @app.route('/')
