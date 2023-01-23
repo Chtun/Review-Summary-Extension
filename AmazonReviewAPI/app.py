@@ -32,12 +32,16 @@ def scrape(url):
         return None
     # Pass the HTML of the page and create 
     data = extractor.extract(r.text,base_url=url)
+    if(data['other_country'] != None):
+        return
     reviews = []
     for r in data['reviews']:
         r["product"] = data["product_title"]
         r['url'] = url
         if 'verified_purchase' in r:
-            if 'Verified Purchase' in r['verified_purchase']:
+            if r['verified_purchase'] == None:
+                r['verified_purchase'] = False
+            elif 'Verified Purchase' in r['verified_purchase']:
                 r['verified_purchase'] = True
             else:
                 r['verified_purchase'] = False
@@ -61,5 +65,11 @@ def api():
     url = request.args.get('url',None)
     if url:
         data = scrape(url)
+        # next_page = data['next_page']
+        # while (next_page != None):
+        #     next_data = scrape(next_page)
+        #     for r in next_data['reviews']:
+        #         data['reviews'].append(r)
+        #     next_page = next_data['next_page']
         return jsonify(data)
     return jsonify({'error':'URL to scrape is not provided'}),400
