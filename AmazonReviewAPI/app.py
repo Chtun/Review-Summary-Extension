@@ -4,7 +4,11 @@ import requests
 from dateutil import parser as dateparser
 import json
 app = Flask(__name__)
-extractor = selectorlib.Extractor.from_yaml_file('selectors.yml')
+extractor = selectorlib.Extractor.from_yaml_file('AmazonReviewAPI\selectors-Amazon.yml')
+
+
+review_retrieve_count = 20
+retrieve_pages = review_retrieve_count / 10
 
 def scrape_product_review_url(url):
 
@@ -72,6 +76,8 @@ def scrape(url):
     data = extractor.extract(r.text,base_url=url)
     if(data['other_country'] != None):
         return
+    if(data['reviews'] == None):
+        return
     reviews = []
     for r in data['reviews']:
         r["product"] = data["product_title"]
@@ -99,7 +105,64 @@ def scrape(url):
     return data 
     
 def quick_retrieve(data):
-    next_page = data['next_page']
+    data['reviews'] = []
+    star_data = []
+    if (data['five_star_link'] != None):
+        next_data = scrape(data['five_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            star_data.append(next_data)
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+    if (data['four_star_link'] != None):
+        next_data = scrape(data['four_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            star_data.append(next_data)
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+
+    if (data['three_star_link'] != None):
+        next_data = scrape(data['three_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            star_data.append(next_data)
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+    if (data['two_star_link'] != None):
+        next_data = scrape(data['two_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            star_data.append(next_data)
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+    if (data['one_star_link'] != None):
+        next_data = scrape(data['one_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            star_data.append(next_data)
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+    
+    for d in star_data:
+        if d['reviews']:
+            for r in d['reviews']:
+                data['reviews'].append(r)
 
     
 
@@ -132,8 +195,13 @@ def api():
     if product_review_url:
 
         data = scrape(product_review_url)
-        deep_retrieve(data)
+
+        if data['number_of_reviews'] < 1000:
+            deep_retrieve(data)
+        else:
+            quick_retrieve(data)
         
+        print("Finished retrieval")
         
         json_object = json.dumps(data, indent = 4)
         with open("review_contents.json", "w") as outfile:

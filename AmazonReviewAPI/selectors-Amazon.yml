@@ -64,3 +64,23 @@ product_review_link:
     css: null
     xpath: '//a[@data-hook="see-all-reviews-link-foot"]'
     type: Link
+five_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 5star ")]'
+    type: Link
+four_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 4star ")]'
+    type: Link
+three_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 3star ")]'
+    type: Link
+two_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 2star ")]'
+    type: Link
+one_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 1star ")]'
+    type: Link
