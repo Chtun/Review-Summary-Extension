@@ -60,3 +60,7 @@ histogram:
         value:
             css: 'td.a-text-right a.a-link-normal'
             type: Text
+product_review_link:
+    css: null
+    xpath: '//a[@data-hook="see-all-reviews-link-foot"]'
+    type: Link
