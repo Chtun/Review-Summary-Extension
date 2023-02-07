@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 import selectorlib
 import requests
 from dateutil import parser as dateparser
@@ -101,7 +101,7 @@ def scrape(url):
     data['histogram'] = histogram
     data['average_rating'] = float(data['average_rating'].split(' out')[0])
     data['reviews'] = reviews
-    data['number_of_reviews'] = int(str(data['number_of_reviews'].split(' global')[0]).replace(',',''))
+    data['number_of_reviews'] = int(str((str(data['number_of_reviews'].split('ratings, ')[1]).replace(',','')).split(' with ')[0]).replace(',',''))
     return data 
     
 def quick_retrieve(data):
@@ -164,8 +164,6 @@ def quick_retrieve(data):
             for r in d['reviews']:
                 data['reviews'].append(r)
 
-    
-
 
 def deep_retrieve(data):
     next_page = data['next_page']
@@ -180,6 +178,14 @@ def deep_retrieve(data):
         else:
             next_page = None
             break
+
+def format_data(data):
+    for key, value in list(data.items()):
+        if value is None:
+            del data[key]
+        elif isinstance(value, dict):
+            format_data(value)
+    return data
 
 @app.route('/')
 def api():
@@ -196,13 +202,17 @@ def api():
 
         data = scrape(product_review_url)
 
-        if data['number_of_reviews'] < 1000:
+        if data['number_of_reviews'] < 100:
+            print("Deep retrieve")
             deep_retrieve(data)
         else:
+            print("Quick retrieve")
             quick_retrieve(data)
         
         print("Finished retrieval")
         
+        format_data(data)
+
         json_object = json.dumps(data, indent = 4)
         with open("review_contents.json", "w") as outfile:
             json.dump(data, outfile)
@@ -212,3 +222,4 @@ def api():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    session.clear()
