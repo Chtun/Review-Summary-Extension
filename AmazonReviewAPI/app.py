@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 import selectorlib
 import requests
+import os
 from dateutil import parser as dateparser
 app = Flask(__name__)
-extractor = selectorlib.Extractor.from_yaml_file('selectors.yml')
+extractor = selectorlib.Extractor.from_yaml_file(os.getcwd() + "\\AmazonReviewAPI\\selectors.yml")
 
 def scrape(url):    
     headers = {
@@ -77,3 +78,5 @@ def api():
                 break
         return jsonify(data)
     return jsonify({'error':'URL to scrape is not provided'}),400,
+
+    # OpenAI key: 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
