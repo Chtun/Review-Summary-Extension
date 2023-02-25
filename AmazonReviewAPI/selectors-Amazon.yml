@@ -47,7 +47,8 @@ average_rating:
     css: 'span[data-hook="rating-out-of-text"]'
     type: Text
 number_of_reviews:
-    css: 'div[data-hook="total-review-count"] span.a-size-base'
+    css: null
+    xpath: '//div[@data-hook="cr-filter-info-review-rating-count"]'
     type: Text
 histogram:
     css: tr.a-histogram-row
@@ -60,3 +61,27 @@ histogram:
         value:
             css: 'td.a-text-right a.a-link-normal'
             type: Text
+product_review_link:
+    css: null
+    xpath: '//a[@data-hook="see-all-reviews-link-foot"]'
+    type: Link
+five_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 5star ")]'
+    type: Link
+four_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 4star ")]'
+    type: Link
+three_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 3star ")]'
+    type: Link
+two_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 2star ")]'
+    type: Link
+one_star_link:
+    css: null
+    xpath: '//a[contains(concat(" ",normalize-space(@class)," ")," 1star ")]'
+    type: Link
