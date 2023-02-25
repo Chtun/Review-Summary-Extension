@@ -5,7 +5,7 @@ import os
 from dateutil import parser as dateparser
 import json
 app = Flask(__name__)
-extractor = selectorlib.Extractor.from_yaml_file(os.getcwd() + "\\AmazonReviewAPI\\selectors.yml")
+extractor = selectorlib.Extractor.from_yaml_file(os.getcwd() + "\\AmazonReviewAPI\\selectors-Amazon.yml")
 
 
 review_retrieve_count = 20
@@ -191,6 +191,8 @@ def format_data(data):
 @app.route('/')
 def api():
     url = request.args.get('url',None)
+    product_review_url = None
+    
     if url:
         product_review_url = url
         if not('product-reviews' in url):
@@ -203,7 +205,7 @@ def api():
 
         data = scrape(product_review_url)
 
-        if data['number_of_reviews'] < 100:
+        if data and data['number_of_reviews'] < 100:
             print("Deep retrieve")
             deep_retrieve(data)
         else:
@@ -223,6 +225,5 @@ def api():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    session.clear()
 
 # OpenAI key: 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
