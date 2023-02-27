@@ -1,7 +1,6 @@
 import json
 import os
-
-api_script_path = "AmazonReviewAPI\\app.py"
+import variables
 
 def make_review_array():
     rc_json = open("review_contents.json")
@@ -13,7 +12,7 @@ def make_review_array():
 
 
 if __name__ == "__main__":
-    os.system('python ' + api_script_path)
+    os.system('python ' + os.getcwd() + variables.get_api_script_path())
     
     make_review_array()
 

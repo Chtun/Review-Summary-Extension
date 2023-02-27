@@ -4,11 +4,9 @@ import openai,os,sys
 # import json to read review contents json file
 import json
 
-# api key
-api_key = "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"
+# global variables
+import variables
 
-# review contents json file - NAME
-review_contents_json = '\\review_contents.json'
 
 def request_summarization(review_content):
     prompt_positive = "Pros and cons about the product in the following reviews:\n"
@@ -119,10 +117,10 @@ def request_summarization(review_content):
 
 
 if __name__ == "__main__":
-    openai.api_key = api_key
+    openai.api_key = variables.get_api_key()
 
     # open review contents json file
-    json_file = open(os.getcwd() + review_contents_json)
+    json_file = open(os.getcwd() + variables.get_review_contents_path())
 
     # return json object as a dictionary
     review_content = json.load(json_file)

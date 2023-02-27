@@ -1,3 +1,4 @@
+# api, scraper, data imports
 from flask import Flask, request, jsonify, session
 import selectorlib
 import requests
@@ -7,6 +8,9 @@ import json
 app = Flask(__name__)
 extractor = selectorlib.Extractor.from_yaml_file(os.getcwd() + "\\AmazonReviewAPI\\selectors-Amazon.yml")
 
+
+# variables
+import variables
 
 review_retrieve_count = 20
 retrieve_pages = review_retrieve_count / 10
@@ -219,6 +223,8 @@ def api():
         json_object = json.dumps(data, indent = 4)
         with open("review_contents.json", "w") as outfile:
             json.dump(data, outfile)
+
+        os.system('python ' + os.getcwd() + variables.get_gpt_analysis_path())
         
         return jsonify(data)
     return jsonify({'error':'URL to scrape is not valid or provided'}),400
