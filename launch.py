@@ -1,18 +1,13 @@
 import json
 import os
+
+# global variables - adding cwd to the system path to access variables
+import sys
+sys.path.insert(0, os.getcwd())
 import variables
 
-def make_review_array():
-    rc_json = open("review_contents.json")
-    review_content = json.load(rc_json)
-    print("hello")
-    print(review_content['product_title'])
 
-
-
-
+# Launches API script
 if __name__ == "__main__":
     os.system('python ' + os.getcwd() + variables.get_api_script_path())
-    
-    make_review_array()
 

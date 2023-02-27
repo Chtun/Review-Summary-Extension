@@ -5,16 +5,20 @@ import requests
 import os
 from dateutil import parser as dateparser
 import json
-app = Flask(__name__)
-extractor = selectorlib.Extractor.from_yaml_file(os.getcwd() + "\\AmazonReviewAPI\\selectors-Amazon.yml")
 
-
-# variables
+# global variables - adding cwd to the system path to access variables
+import sys
+sys.path.insert(0, os.getcwd())
 import variables
 
-review_retrieve_count = 20
-retrieve_pages = review_retrieve_count / 10
+# Flask and Extractor variables
+app = Flask(__name__)
+extractor = selectorlib.Extractor.from_yaml_file(os.getcwd() + variables.get_selectors_amazon_path())
 
+# For number of pages to retrieve
+retrieve_pages = variables.get_num_pages_retrieve()
+
+# Scrape page to find product review page
 def scrape_product_review_url(url):
 
     headers = {
@@ -51,7 +55,7 @@ def scrape_product_review_url(url):
 
 
 
-
+# Scrape product review page for information
 def scrape(url):    
     headers = {
         'authority': 'www.amazon.com',
@@ -108,68 +112,83 @@ def scrape(url):
     data['reviews'] = reviews
     data['number_of_reviews'] = int(str((str(data['number_of_reviews'].split('ratings, ')[1]).replace(',','')).split(' with ')[0]).replace(',',''))
     return data 
-    
+
+# Append reviews to data from data_to_add, if the reviews exist
+def append_reviews(data_to_add, data):
+    if data_to_add['reviews']:
+        for r in data_to_add['reviews']:
+            data['reviews'].append(r)
+
+# Only processes the top 20 reviews for each of the 5 star categories - up to 100 trust reviews in English processed in total
 def quick_retrieve(data):
     data['reviews'] = []
-    star_data = []
+
+    # If five star reviews exist, add its reviews to data
     if (data['five_star_link'] != None):
         next_data = scrape(data['five_star_link'])
         count = 0
         while(next_data != None and count < retrieve_pages):
-            star_data.append(next_data)
-            if (next_data['next_page'] != None):
-                next_data = scrape(next_data['next_page'])
-            else:
-                next_data = None
-            count += 1
-    if (data['four_star_link'] != None):
-        next_data = scrape(data['four_star_link'])
-        count = 0
-        while(next_data != None and count < retrieve_pages):
-            star_data.append(next_data)
-            if (next_data['next_page'] != None):
-                next_data = scrape(next_data['next_page'])
-            else:
-                next_data = None
-            count += 1
-
-    if (data['three_star_link'] != None):
-        next_data = scrape(data['three_star_link'])
-        count = 0
-        while(next_data != None and count < retrieve_pages):
-            star_data.append(next_data)
-            if (next_data['next_page'] != None):
-                next_data = scrape(next_data['next_page'])
-            else:
-                next_data = None
-            count += 1
-    if (data['two_star_link'] != None):
-        next_data = scrape(data['two_star_link'])
-        count = 0
-        while(next_data != None and count < retrieve_pages):
-            star_data.append(next_data)
-            if (next_data['next_page'] != None):
-                next_data = scrape(next_data['next_page'])
-            else:
-                next_data = None
-            count += 1
-    if (data['one_star_link'] != None):
-        next_data = scrape(data['one_star_link'])
-        count = 0
-        while(next_data != None and count < retrieve_pages):
-            star_data.append(next_data)
+            # If another page exists, add its reviews to data
+            append_reviews(next_data, data)
             if (next_data['next_page'] != None):
                 next_data = scrape(next_data['next_page'])
             else:
                 next_data = None
             count += 1
     
-    for d in star_data:
-        if d['reviews']:
-            for r in d['reviews']:
-                data['reviews'].append(r)
+    # If four star reviews exist, add its reviews to data
+    if (data['four_star_link'] != None):
+        next_data = scrape(data['four_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            append_reviews(next_data, data)
+            # If another page exists, add its reviews to data
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
 
+    # If three star reviews exist, add its reviews to data
+    if (data['three_star_link'] != None):
+        next_data = scrape(data['three_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            append_reviews(next_data, data)
+            # If another page exists, add its reviews to data
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
 
+    # If two star reviews exist, add its reviews to data
+    if (data['two_star_link'] != None):
+        next_data = scrape(data['two_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            append_reviews(next_data, data)
+            # If another page exists, add its reviews to data
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+
+    # If one star reviews exist, add them to data
+    if (data['one_star_link'] != None):
+        next_data = scrape(data['one_star_link'])
+        count = 0
+        while(next_data != None and count < retrieve_pages):
+            append_reviews(next_data, data)
+            # If another page exists, add its reviews to data
+            if (next_data['next_page'] != None):
+                next_data = scrape(next_data['next_page'])
+            else:
+                next_data = None
+            count += 1
+
+# Processes all trust reviews in English under a product
 def deep_retrieve(data):
     next_page = data['next_page']
     count = 1
@@ -184,6 +203,7 @@ def deep_retrieve(data):
             next_page = None
             break
 
+# deletes empty or null data values
 def format_data(data):
     for key, value in list(data.items()):
         if value is None:
@@ -192,6 +212,8 @@ def format_data(data):
             format_data(value)
     return data
 
+
+# Runs api requests when user changes link
 @app.route('/')
 def api():
     url = request.args.get('url',None)

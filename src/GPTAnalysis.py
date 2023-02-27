@@ -4,7 +4,9 @@ import openai,os,sys
 # import json to read review contents json file
 import json
 
-# global variables
+# global variables - adding cwd to the system path to access variables
+import sys
+sys.path.insert(0, os.getcwd())
 import variables
 
 
