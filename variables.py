@@ -2,9 +2,9 @@ import math
 
 # PATHS
 # src
-api_script_path = "\\src\\AmazonReviewAPI\\app.py"
+api_script_path = "\\src\\app.py"
 gpt_analysis_path = "\\src\\GPTAnalysis.py"
-selectors_amazon_path = "\\src\\AmazonReviewAPI\\selectors-Amazon.yml"
+selectors_amazon_path = "\\src\\PageSelectors\\selectors-Amazon.yml"
 
 # data
 review_contents_json = '\\data\\review_contents.json'
