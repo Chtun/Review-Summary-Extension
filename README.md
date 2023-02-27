@@ -1,7 +1,7 @@
 # Review Summary Extension
 
 TO RUN:
-Use command "python .\AmazonReviewAPI\app.py" in terminal
+Use command "python launch.py" in terminal
 
 
 
