@@ -3,7 +3,7 @@ import math
 # PATHS
 # src
 api_script_path = "\\src\\app.py"
-gpt_analysis_path = "\\src\\GPTAnalysis.py"
+gpt_analysis_path = "\\src\\TextAnalysis.py"
 selectors_amazon_path = "\\src\\PageSelectors\\selectors-Amazon.yml"
 
 # data

@@ -1,11 +1,13 @@
-#Import open AI OS and System Modules
-import openai,os,sys
+#Import OS and System Modules
+import os,sys
 
 # import json to read review contents json file
 import json
 
+# import AI models
+import openai, spacy
+
 # global variables - adding cwd to the system path to access variables
-import sys
 sys.path.insert(0, os.getcwd())
 import variables
 
@@ -13,6 +15,8 @@ import variables
 def request_summarization(review_content):
     prompt_positive = "Pros and cons about the product in the following reviews:\n"
     prompt_negative = "Pros and cons about the product in the following reviews:\n"
+
+    adjectives = []
 
     count_positive = 0
     count_negative = 0
@@ -23,8 +27,24 @@ def request_summarization(review_content):
                 prompt_positive += review['content'] + "\n"
             elif review['rating'] and float(review['rating']) < 2.5:
                 prompt_negative += review['content'] + "\n"
-    print(prompt_positive)
+                    
+    
+    # SpaCy text breakdown
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(prompt_positive)
+    for index in range(len(doc)):
+        if (doc[index].pos_ == "ADJ"):
+            descriptive_info = doc[index].text.capitalize()
+            if (doc[index].head and doc[index].head.pos_ == "NOUN"):
+                descriptive_info += " " + doc[index].head.text.capitalize()
+            adjectives.append(descriptive_info)
+
+    print("Adjectives:")
+    print(adjectives)
+
+    print("\n" + prompt_positive)
     print(prompt_negative)
+
 
     # Summarize for the positive qualities
     # completions = openai.Completion.create(
