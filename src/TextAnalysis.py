@@ -35,13 +35,26 @@ def request_summarization(review_content):
     for index in range(len(doc)):
         if (doc[index].pos_ == "ADJ"):
             descriptive_info = doc[index].text.capitalize()
-            if (doc[index].head and doc[index].head.pos_ == "NOUN"):
-                descriptive_info += " " + doc[index].head.text.capitalize()
+            end = False
+            p = doc[index]
+            while (p.head and end != True):
+                if (p.dep_ == "amod" or p.dep_ == "dobj"):
+                    if (p.head.lemma_ == "be"):
+                        end = True
+                    else:
+                        descriptive_info += " " + p.head.text.capitalize()
+                        p = p.head
+                else:
+                    end = True
             adjectives.append(descriptive_info)
+
+    for w in doc:
+        print(w.text + ":\ntag - " + w.pos_ + "\t-\t" + str(spacy.explain(w.pos_)) + "\ndep - " + w.dep_ + "\t-\t" + str(spacy.explain(w.dep_)))
+
 
     print("Adjectives:")
     print(adjectives)
-
+    
     print("\n" + prompt_positive)
     print(prompt_negative)
 
