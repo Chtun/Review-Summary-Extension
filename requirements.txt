@@ -19,3 +19,5 @@ numpy==1.24.2
 
 -f https://download.pytorch.org/whl/torch_stable.html
 torch==1.13.1+cpu
+torchtext==0.14.1
+matplotlib==3.7.1

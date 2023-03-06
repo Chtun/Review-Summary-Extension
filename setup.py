@@ -22,7 +22,7 @@ if __name__ == "__main__":
         import spacy
         spacy.load("en_core_web_sm")
         print("SpaCy Model 'en_core_web_sm' is installed and loaded")
-                
+
     except Exception:
         print("SpaCy Model 'en_core_web_sm' is not installed")
         subprocess.call([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])

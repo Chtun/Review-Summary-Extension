@@ -256,5 +256,3 @@ def api():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# OpenAI key: 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

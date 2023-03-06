@@ -4,7 +4,7 @@ import os,sys
 # import json to read review contents json file
 import json
 
-# import AI models
+# import AI and text tokenization models
 import openai, spacy
 
 # global variables - adding cwd to the system path to access variables
