@@ -6,8 +6,9 @@ import os
 from dateutil import parser as dateparser
 import json
 
-# global variables - adding cwd to the system path to access variables
-import sys
+# system
+import sys, subprocess
+# adding cwd to the system path to access variables
 sys.path.insert(0, os.getcwd())
 import variables
 
@@ -246,7 +247,9 @@ def api():
         with open("review_contents.json", "w") as outfile:
             json.dump(data, outfile)
 
-        os.system('python ' + os.getcwd() + variables.get_gpt_analysis_path())
+
+        subprocess.call([sys.executable, os.getcwd() + variables.get_gpt_analysis_path()])
+        
         
         return jsonify(data)
     return jsonify({'error':'URL to scrape is not valid or provided'}),400
