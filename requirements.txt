@@ -15,3 +15,7 @@ Werkzeug==2.2.2
 requests==2.28.2
 openai==0.26.5
 spacy==3.5.0
+numpy==1.24.2
+
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==1.13.1+cpu
