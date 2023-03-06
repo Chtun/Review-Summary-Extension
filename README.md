@@ -1,5 +1,8 @@
 # Review Summary Extension
 
+** IN DEVELOPMENT**
+
+
 TO RUN:
 Use command "python launch.py" in terminal
 
