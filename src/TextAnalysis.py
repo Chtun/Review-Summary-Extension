@@ -4,7 +4,7 @@ import os,sys
 # import json to read review contents json file
 import json
 
-# import AI models
+# import AI and text tokenization models
 import openai, spacy
 
 # global variables - adding cwd to the system path to access variables
@@ -49,7 +49,7 @@ def request_summarization(review_content):
             adjectives.append(descriptive_info)
 
     for w in doc:
-        print(w.text + ":\ntag - " + w.pos_ + "\t-\t" + str(spacy.explain(w.pos_)) + "\ndep - " + w.dep_ + "\t-\t" + str(spacy.explain(w.dep_)))
+        print(w.text + ":\ntag - " + w.pos_ + "\t-\t" + str(spacy.explain(w.pos_)) + "\ndep - " + str(w.dep) + "\t-\t" + str(spacy.explain(w.dep_)))
 
 
     print("Adjectives:")

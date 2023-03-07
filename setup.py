@@ -16,13 +16,13 @@ if __name__ == "__main__":
     else:
         print("Python version " + str(sys.version_info[0]) + "." + str(sys.version_info[1]) + "." + str(sys.version_info[2]) + " is valid.")
     
-    subprocess.run(['pip', 'install', '-r', os.getcwd() + variables.get_requirements_path()])
+    subprocess.run(['python', '-m', 'pip', 'install', '-r', os.getcwd() + variables.get_requirements_path()])
     
     try:
         import spacy
         spacy.load("en_core_web_sm")
         print("SpaCy Model 'en_core_web_sm' is installed and loaded")
-                
+
     except Exception:
         print("SpaCy Model 'en_core_web_sm' is not installed")
         subprocess.call([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
